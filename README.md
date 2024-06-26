@@ -37,7 +37,7 @@ curl -XPOST http://localhost:8080/management/bucket \
 ```
 
 ### Insert data
-Enter sample data in _simple line format_ (`<measurement>[,<tag>] <value>[,<value>...n] [<timestampInMs>]),
+Enter sample data in _simple line format_ (`<measurement>[,<tag>] <value>[,<value>...n] [<timestampInMs>]`),
 this format is inspired by _InfluxDb_, but does not use named values, but positional values.
 Also, before _InfluxDb_, the unix timestamp in milliseconds is always used as the time.
 
@@ -187,7 +187,7 @@ SELECT AVG(0), COUNT(0) FROM sensors_data WHERE INTERVAL('2012-06-12 08:33:12.47
 ## Roadmap
 - Charts in _YATsDb_
 - Authentication (eg. API key, HMAC)
-- UDP listening
+- UDP endpoint
 
 ## Known Issues
  - Problems updating a javascript job.
