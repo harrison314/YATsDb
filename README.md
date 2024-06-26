@@ -31,9 +31,7 @@ In the examples, the base URL is <http://localhost:8080/>.
 ### Create bucket
 Create a new bucket `smart_home`:
 ```shell
-curl -XPOST http://localhost:8080/management/bucket \
-   --header 'Content-Type: application/json' \
-   --data-binary '{"bucketName": "smart_home","description": null}'
+curl -XPOST http://localhost:8080/management/bucket --header "Content-Type: application/json" --data-binary "{\"bucketName\":\"smart_home\",\"description\": null}"
 ```
 
 ### Insert data
@@ -44,22 +42,22 @@ Also, before _InfluxDb_, the unix timestamp in milliseconds is always used as th
 The following sample data represent data from home measurement of sensors - temperature, humidity, light intensity.
 
 ```shell
-curl -XPOST http://localhost:8080/write/smart_home --data-binary 'sensors_data,Room1 22.0,45,80.4 1719242779202'
-curl -XPOST http://localhost:8080/write/smart_home --data-binary 'sensors_data,Room1 23.1,39.4,75.0 1719243079200'
-curl -XPOST http://localhost:8080/write/smart_home --data-binary 'sensors_data,Room1 23.2,41.7,NULL 1719243379246'
-curl -XPOST http://localhost:8080/write/smart_home --data-binary 'sensors_data,Room2 23.0,41,80.4 1719243379256'
-curl -XPOST http://localhost:8080/write/smart_home --data-binary 'sensors_data,Room1 22.0,45,80.4 1719243679194'
-curl -XPOST http://localhost:8080/write/smart_home --data-binary 'sensors_data,Room2 22.7,47.4,NULL 1719243979257'
-curl -XPOST http://localhost:8080/write/smart_home --data-binary 'sensors_data,Room1 22.1,47,NULL 1719244279035'
-curl -XPOST http://localhost:8080/write/smart_home --data-binary 'sensors_data,Room3 18.7,NULL,NULL 1719244579031'
-curl -XPOST http://localhost:8080/write/smart_home --data-binary 'sensors_data,Room1 24.7,51.7,2.4 1719244879109'
+curl -XPOST http://localhost:8080/write/smart_home --data-binary "sensors_data,Room1 22.0,45,80.4 1719242779202"
+curl -XPOST http://localhost:8080/write/smart_home --data-binary "sensors_data,Room1 23.1,39.4,75.0 1719243079200"
+curl -XPOST http://localhost:8080/write/smart_home --data-binary "sensors_data,Room1 23.2,41.7,NULL 1719243379246"
+curl -XPOST http://localhost:8080/write/smart_home --data-binary "sensors_data,Room2 23.0,41,80.4 1719243379256"
+curl -XPOST http://localhost:8080/write/smart_home --data-binary "sensors_data,Room1 22.0,45,80.4 1719243679194"
+curl -XPOST http://localhost:8080/write/smart_home --data-binary "sensors_data,Room2 22.7,47.4,NULL 1719243979257"
+curl -XPOST http://localhost:8080/write/smart_home --data-binary "sensors_data,Room1 22.1,47,NULL 1719244279035"
+curl -XPOST http://localhost:8080/write/smart_home --data-binary "sensors_data,Room3 18.7,NULL,NULL 1719244579031"
+curl -XPOST http://localhost:8080/write/smart_home --data-binary "sensors_data,Room1 24.7,51.7,2.4 1719244879109"
 ```
 
 It is possible to send multiple lines in one message, but not every shell supports this.
 
 ```shell
-curl -XPOST http://localhost:8080/write/smart_home --data-binary 'sensors_data,Room1 24.7,51.7,2.4 1719244879109
-sensors_data,Room1 24.8,55.7,3.9 1719244899109'
+curl -XPOST http://localhost:8080/write/smart_home --data-binary "sensors_data,Room1 24.7,51.7,2.4 1719244879109
+sensors_data,Room1 24.8,55.7,3.9 1719244899109"
 ```
 
 ### Query data
@@ -67,7 +65,7 @@ _YATsDb_ allows querying in a syntax that resembles SQL, but uses value position
 
 Select humidity data from _Room2_ older than 12 hours:
 ```shell
-curl -XPOST http://localhost:8080/query/raw/smart_home --data-binary 'SELECT AVG(1), MIN(1), MAX(1), COUNT(1) FROM sensors_data WHERE TAG("Room2") AND INTERVAL(NULL, -10h) GROUP BY +10m'
+curl -XPOST http://localhost:8080/query/raw/smart_home --data-binary "SELECT AVG(1), MIN(1), MAX(1), COUNT(1) FROM sensors_data WHERE TAG('Room2') AND INTERVAL(NULL, -10h) GROUP BY +10m"
 ```
 
 ## Simple line protocol
