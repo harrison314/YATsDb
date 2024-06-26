@@ -1,0 +1,112 @@
+﻿@page "/ui/cronJobs/{Bucket}/create"
+@rendermode InteractiveServer
+@using YATsDb.Core.Services
+@using YATsDb.Core.HighLevel
+@using YATsDb.Services.Contracts
+@inject YATsDb.Services.Contracts.ICronManagement CronManagement
+@inject NavigationManager Navigation
+
+<PageTitle>Create Cron Jobs - @this.Bucket</PageTitle>
+
+<h1>Create Cron Jobs - @this.Bucket</h1>
+
+<div class="row">
+    <div class="col-9">
+
+        <EditForm Model="Model" OnSubmit="Submit" FormName="CreateBucket">
+            <div class="mb-3">
+                <label for="" class="form-label">Job name</label>
+                <InputText class="form-control" placeholder="" @bind-Value="Model.Name" />
+            </div>
+            <div class="mb-3">
+                <label for="" class="form-label">Cron expression</label>
+                <InputText class="form-control" placeholder="" @bind-Value="Model.CronExpression" />
+            </div>
+            <div class="mb-3">
+                <label for="" class="form-label">Javascript code</label>
+                <InputTextArea class="form-control" rows="3" @bind-Value="Model.Code"></InputTextArea>
+                @if (!string.IsNullOrEmpty(this.syntaxError))
+                {
+                    <span class="text-danger">@this.syntaxError</span>
+                }
+            </div>
+
+            <div class="mb-3">
+                <label for="" class="form-label">Enabled</label>
+                <InputCheckbox class="form-check-input" @bind-Value="Model.Enabled" />
+            </div>
+
+            <div class="mb-3">
+                <button type="submit" class="btn btn-secondary float-end">Submit</button>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+
+@code {
+    [Parameter]
+    public string Bucket
+    {
+        get;
+        set;
+    } = string.Empty;
+
+    [SupplyParameterFromForm]
+    public ModelClass Model { get; set; } = new ModelClass();
+    private string syntaxError = string.Empty;
+
+    private void Submit()
+    {
+        this.syntaxError = string.Empty;
+        if (!Cronos.CronExpression.TryParse(this.Model.CronExpression, out _))
+        {
+            this.syntaxError = "Cron expression is not valid.";
+            return;
+        }
+
+        try
+        {
+            this.CronManagement.CreateCronJob(this.Bucket,
+                new CreateCronJobRequest(this.Model.Name,
+                    this.Model.CronExpression,
+                    this.Model.Code,
+                    this.Model.Enabled));
+
+            this.CronManagement.ExecuteJob(this.Bucket, this.Model.Name);
+            this.Navigation.NavigateTo($"ui/cronJobs/{Bucket}");
+        }
+        catch (Exception ex)
+        {
+            this.CronManagement.DeleteCronJob(this.Bucket, this.Model.Name);
+            this.syntaxError = ex.Message;
+        }
+    }
+
+    public class ModelClass
+    {
+        public string Name
+        {
+            get;
+            set;
+        } = string.Empty;
+
+        public string CronExpression
+        {
+            get;
+            set;
+        } = string.Empty;
+
+        public string Code
+        {
+            get;
+            set;
+        } = string.Empty;
+
+        public bool Enabled
+        {
+            get;
+            set;
+        }
+    }
+}

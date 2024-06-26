@@ -1,0 +1,59 @@
+﻿@page "/ui/bucket/create"
+@rendermode InteractiveServer
+@using System.ComponentModel.DataAnnotations
+@using YATsDb.Core.Services
+@using YATsDb.Core.HighLevel
+@inject YATsDb.Core.Services.IManagementService ManagementServices
+@inject NavigationManager Navigation
+
+<PageTitle>Create buckets</PageTitle>
+
+<h1>Create buckets</h1>
+
+<div class="row">
+    <div class="col-9">
+
+        <EditForm Model="Model" OnSubmit="Submit" FormName="CreateBucket">
+            <div class="mb-3">
+                <label for="" class="form-label">Bucket name</label>
+                <InputText class="form-control" placeholder="" @bind-Value="Model.Name" />
+            </div>
+            <div class="mb-3">
+                <label for="" class="form-label">Description</label>
+                <InputTextArea class="form-control" rows="3" @bind-Value="Model.Description"></InputTextArea>
+            </div>
+
+            <div class="mb-3">
+                <button type="submit" class="btn btn-secondary float-end">Submit</button>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    public ModelClass Model { get; set; } = new ModelClass();
+
+    private void Submit()
+    {
+        this.ManagementServices.CreateBucket(this.Model.Name.Trim(),
+        string.IsNullOrWhiteSpace(this.Model.Description) ? null : this.Model.Description.Trim());
+
+        this.Navigation.NavigateTo("/ui/bucket");
+    }
+
+    public class ModelClass
+    {
+        public string Name
+        {
+            get;
+            set;
+        } = string.Empty;
+
+        public string Description
+        {
+            get;
+            set;
+        } = string.Empty;
+    }
+}

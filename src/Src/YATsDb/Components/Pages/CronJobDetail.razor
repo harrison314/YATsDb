@@ -1,0 +1,94 @@
+﻿@page "/ui/cronJobs/{Bucket}/detail/{Name}"
+@rendermode InteractiveServer
+@using YATsDb.Core.Services
+@using YATsDb.Core.HighLevel
+@using YATsDb.Services.Contracts
+@inject YATsDb.Services.Contracts.ICronManagement CronManagement
+@inject NavigationManager Navigation
+
+<PageTitle>Cron job @(this.Bucket)/@(this.Name)</PageTitle>
+
+<h1>Cron job @(this.Bucket)/@(this.Name)</h1>
+
+<div class="row">
+    <div class="col-9">
+
+        @if (this.job != null)
+        {
+            <table class="table table-striped">
+                <tbody>
+                    <tr>
+                        <td>Name</td>
+                        <td>@this.job.Name</td>
+                    </tr>
+                    <tr>
+                        <td>Cron Expression</td>
+                        <td>@this.job.CronExpression</td>
+                    </tr>
+
+                    <tr>
+                        <td>Code</td>
+                        <td>
+                            <code>
+                                <pre>
+                                    @this.job.Code
+                                    </pre>
+                            </code>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>Enabled</td>
+                        <td>
+                            @if (this.job.Enabled)
+                            {
+                                <span class="badge bg-success">Enabled</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-dark">Disabled</span>
+                            }
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Created</td>
+                        <td>@this.job.Created</td>
+                    </tr>
+                    <tr>
+                        <td>Updated</td>
+                        <td>@this.job.Updated</td>
+                    </tr>
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <YATsDb.Components.Shared.LoadingIndicator />
+        }
+    </div>
+</div>
+
+
+@code {
+    private CronJob? job = null;
+
+    [Parameter]
+    public string Bucket
+    {
+        get;
+        set;
+    } = string.Empty;
+
+    [Parameter]
+    public string Name
+    {
+        get;
+        set;
+    } = string.Empty;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await Task.Delay(10);
+        this.job = this.CronManagement.TryGetCronJob(this.Bucket, this.Name);
+    }
+}

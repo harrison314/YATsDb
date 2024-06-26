@@ -1,0 +1,105 @@
+﻿@page "/ui/bucket/insertLines/{Bucket}"
+@using YATsDb.Core.Services
+@using YATsDb.Core.HighLevel
+@inject YATsDb.Core.Services.IDalServices DalServices
+@inject NavigationManager Navigation
+
+<PageTitle>Insert lines</PageTitle>
+
+<h1>Insert lines</h1>
+
+<div class="row">
+    <div class="col-9">
+        <p>
+            Insert data into <strong>@this.Bucket</strong> using simple line protocol.
+        </p>
+        <EditForm Model="Model" OnSubmit="Submit" FormName="Lines">
+           
+            <div class="mb-3">
+                <label for="" class="form-label">Lines</label>
+                <InputTextArea class="form-control" 
+                rows="3" 
+                @bind-Value="Model!.Lines"
+                placeholder="<measurment>[,<tag>] <value>[,<value>*] [<timespan in ms>]"></InputTextArea>
+
+                @if (!string.IsNullOrEmpty(this.syntaxError))
+                {
+                    <span class="text-danger">@this.syntaxError</span>
+                }
+                </div>
+
+            <div class="mb-3">
+                <button type="submit" class="btn btn-secondary float-end">Submit</button>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-9">
+        <div class="card mt-2 border-info">
+            <div class="card-body">
+                <h5 class="card-title">Examples</h5>
+                <p class="card-text">
+                    <code>
+                        my_measurment 12.1,13.0,5.5 @DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()<br />
+                        my_measurment,tag 12.1,NULL,5.5 @DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()<br />
+                        my_measurment,tag/other 4.8<br />
+                    </code>
+                </p>
+
+                <h5 class="card-title">Simple line gramar</h5>
+                <p class="card-text">
+                    <code>
+                        lines := &lt;simpleLine&gt; [\n &lt;simpleLine&gt;]*<br />
+                        simpleLine := &lt;measurment&gt;[,&lt;tag&gt;] &lt;value&gt;[,&lt;value&gt;]* [&lt;timespan&gt;]<br />
+                        measurment := name of measurment<br />
+                        tag := tag for measurment<br />
+                        value := &lt;double value&gt; | NULL<br />
+                        timespan := unix timestamp in milisecunds<br />
+                    </code>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    public ModelClass Model { get; set; } = new ModelClass();
+    private string syntaxError = string.Empty;
+
+    [Parameter]
+    public string Bucket
+    {
+        get;
+        set;
+    } = string.Empty;
+
+    private void Submit()
+    {
+        this.syntaxError = string.Empty;
+        try
+        {
+            this.DalServices.InsertLines(this.Bucket, this.Model.Lines);
+
+            this.Model.Lines = string.Empty;
+        }
+        catch (YATsDb.Core.YatsdbDataException ex)
+        {
+            this.syntaxError = ex.Message;
+        }
+    }
+
+    public class ModelClass
+    {
+        [System.ComponentModel.DataAnnotations.Required]
+        [System.ComponentModel.DataAnnotations.MinLength(1)]
+        public string Lines
+        {
+            get;
+            set;
+        } = string.Empty;
+    }
+}
+

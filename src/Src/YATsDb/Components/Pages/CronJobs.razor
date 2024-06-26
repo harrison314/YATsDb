@@ -1,0 +1,76 @@
+﻿@page "/ui/cronJobs/{Bucket}"
+@rendermode InteractiveServer
+@using YATsDb.Core.Services
+@using YATsDb.Core.HighLevel
+@using YATsDb.Services.Contracts
+@inject YATsDb.Services.Contracts.ICronManagement CronManagement
+
+<PageTitle>Cron Jobs - @this.Bucket</PageTitle>
+
+<h1>Cron Jobs - @this.Bucket</h1>
+
+<div class="row">
+    <div class="col-9 pb-2">
+        <NavLink href="@($"ui/cronJobs/{Bucket}/create")" class="btn btn-primary float-end">Create job</NavLink>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-9">
+        @if (this.jobs != null)
+        {
+            @foreach (CronJobInfo info in this.jobs)
+            {
+                <div class="card mt-2" @key="info.Name">
+                    <div class="card-body">
+                        <h5 class="card-title">@info.Name</h5>
+                        <NavLink class="btn btn-sm btn-outline-primary float-start me-1" href="@($"/ui/cronJobs/{this.Bucket}/detail/{info.Name}")">Detail</NavLink>
+                        <NavLink class="btn btn-sm btn-outline-primary float-start me-1" href="@($"/ui/cronJobs/{this.Bucket}/update/{info.Name}")">Update</NavLink>
+                        <button class="btn btn-sm btn-outline-secondary float-end" @onclick="()=>this.RemoveJob(info.Name)">Remove</button>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <YATsDb.Components.Shared.LoadingIndicator />
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string Bucket
+    {
+        get;
+        set;
+    } = string.Empty;
+
+    private List<CronJobInfo>? jobs = null;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        this.jobs = null;
+        await Task.Delay(1);
+        this.jobs = this.CronManagement.ListJobs(this.Bucket);
+    }
+
+    private async Task RemoveJob(string name)
+    {
+        this.jobs = null;
+        await Task.Delay(1);
+
+        try
+        {
+            this.CronManagement.DeleteCronJob(this.Bucket, name);
+        }
+        catch (Core.YatsdbDataException ex)
+        {
+            //TODO: Fix duplicate execution
+            Console.WriteLine(ex);
+        }
+
+        this.jobs = this.CronManagement.ListJobs(this.Bucket);
+        await Task.Delay(1);
+    }
+}

@@ -1,0 +1,37 @@
+@Lite_HostAddress = http://localhost:5062
+
+
+GET {{Lite_HostAddress}}/management/bucket
+Accept: application/json
+
+### 
+
+GET {{Lite_HostAddress}}/management/bucket
+Accept: application/json
+
+###
+
+POST {{Lite_HostAddress}}/management/bucket
+Accept: application/json
+Content-Type: application/json
+
+{
+  "bucketName": "testBucket",
+  "description": null
+}
+
+###
+
+
+POST {{Lite_HostAddress}}/write/testBucket
+
+my_home,measurment1 12.5 1719158037000
+my_home,measurment1 14.5 1719158038000
+my_home,measurment1/86 14.5 1719158039000
+
+###
+
+POST {{Lite_HostAddress}}/query/raw/testBucket
+
+SELECT * FROM my_home LIMIT 100
+

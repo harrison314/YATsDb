@@ -1,0 +1,59 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D5708034-DB1D-4732-ADA8-3B1D1B590DE5}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+		..\README.md = ..\README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Src", "Src", "{46AC8D12-F637-4B1B-97AD-4E861F57262A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{87C9A6FC-4D25-4715-BF0A-D82F5CF37E67}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YATsDb.Core", "Src\YATsDb.Core\YATsDb.Core.csproj", "{E4D69943-2956-4911-89B1-B2AA82A1AD9E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YATsDb.Core.Tests", "Test\YATsDb.Core.Tests\YATsDb.Core.Tests.csproj", "{6886AF5F-7A1E-4AC8-BA56-AD7BA74497BD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YATsDb", "Src\YATsDb\YATsDb.csproj", "{7C702FF2-702F-4866-B879-6AB4315F504C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YATsDb.Lite", "Src\YATsDb.Lite\YATsDb.Lite.csproj", "{73E6E65E-6C3D-457C-90AA-475C3E41B007}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E4D69943-2956-4911-89B1-B2AA82A1AD9E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E4D69943-2956-4911-89B1-B2AA82A1AD9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E4D69943-2956-4911-89B1-B2AA82A1AD9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E4D69943-2956-4911-89B1-B2AA82A1AD9E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6886AF5F-7A1E-4AC8-BA56-AD7BA74497BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6886AF5F-7A1E-4AC8-BA56-AD7BA74497BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6886AF5F-7A1E-4AC8-BA56-AD7BA74497BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6886AF5F-7A1E-4AC8-BA56-AD7BA74497BD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C702FF2-702F-4866-B879-6AB4315F504C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C702FF2-702F-4866-B879-6AB4315F504C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C702FF2-702F-4866-B879-6AB4315F504C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C702FF2-702F-4866-B879-6AB4315F504C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{73E6E65E-6C3D-457C-90AA-475C3E41B007}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73E6E65E-6C3D-457C-90AA-475C3E41B007}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73E6E65E-6C3D-457C-90AA-475C3E41B007}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73E6E65E-6C3D-457C-90AA-475C3E41B007}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E4D69943-2956-4911-89B1-B2AA82A1AD9E} = {46AC8D12-F637-4B1B-97AD-4E861F57262A}
+		{6886AF5F-7A1E-4AC8-BA56-AD7BA74497BD} = {87C9A6FC-4D25-4715-BF0A-D82F5CF37E67}
+		{7C702FF2-702F-4866-B879-6AB4315F504C} = {46AC8D12-F637-4B1B-97AD-4E861F57262A}
+		{73E6E65E-6C3D-457C-90AA-475C3E41B007} = {46AC8D12-F637-4B1B-97AD-4E861F57262A}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {07A2C3EF-27F6-4533-8C3D-CFB128E55924}
+	EndGlobalSection
+EndGlobal

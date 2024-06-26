@@ -1,0 +1,177 @@
+﻿@page "/ui/bucket/select/{Bucket}"
+@using YATsDb.Core.Services
+@using YATsDb.Core.HighLevel
+@inject YATsDb.Core.Services.IManagementService ManagementServices
+@inject YATsDb.Core.Services.IDalServices DalServices
+@inject NavigationManager Navigation
+
+<PageTitle>Query data</PageTitle>
+
+<h1>Query data</h1>
+
+<div class="row">
+    <div class="col-9">
+        <p>
+            Query data for bucket <strong>@this.Bucket</strong> in SQL like queries.
+        </p>
+
+        @if (this.measurments != null)
+        {
+            <p>
+                <span>Available measurments: </span>
+                @for (int i = 0; i < this.measurments.Count; i++)
+                {
+                    @if (i > 0)
+                    {
+                        <span>, </span>
+                    }
+                    <code>@this.measurments[i]</code>
+                }
+                <span> .</span>
+            </p>
+        }
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-9">
+
+        <EditForm Model="Model" OnSubmit="Submit" FormName="QueryForm">
+
+            <div class="mb-3">
+                <label for="" class="form-label">Query</label>
+                <InputTextArea class="form-control"
+                               rows="3"
+                               @bind-Value="Model!.Query"></InputTextArea>
+                @if (!string.IsNullOrEmpty(this.syntaxError))
+                {
+                    <span class="text-danger">@this.syntaxError</span>
+                }
+            </div>
+
+            <div class="mb-3">
+                <button type="submit" class="btn btn-secondary float-end">Submit</button>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-9">
+        <h5>Data</h5>
+        @if (this.data == null)
+        {
+            <YATsDb.Components.Shared.LoadingIndicator />
+        }
+        else
+        {
+            <table class="table">
+                <tbody>
+                    @foreach (object?[] row in this.data)
+                    {
+                        <tr>
+                            @foreach (object? col in row)
+                            {
+                                <td>
+                                    @if (col == null)
+                                    {
+                                        <em>NULL</em>
+                                    }
+                                    else
+                                    {
+                                        <span>@col</span>
+                                    }
+                                </td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-9">
+        <div class="card mt-2 border-info">
+            <div class="card-body">
+                <h5 class="card-title">Examples</h5>
+                <p class="card-text">
+                    <code>
+                        SELECT * FROM measurment<br />
+                        SELECT AVG(0), MIN(0), MAX(0), COUNT(0)  FROM measurment GROUP BY +10m<br />
+                    </code>
+                </p>
+
+                <h5 class="card-title">Simple line gramar</h5>
+                <p class="card-text">
+                    <code>
+                    </code>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private List<string>? measurments = null;
+    private List<object?[]>? data = new List<object?[]>();
+    private string syntaxError = string.Empty;
+
+    [SupplyParameterFromForm]
+    public ModelClass Model { get; set; } = new ModelClass();
+
+    [Parameter]
+    public string Bucket
+    {
+        get;
+        set;
+    } = string.Empty;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        this.measurments = null;
+        await Task.Delay(1);
+        this.measurments = this.ManagementServices.ListMeasurements(this.Bucket);
+    }
+
+    private async Task Submit()
+    {
+        this.data = null;
+        this.syntaxError = string.Empty;
+        await Task.Delay(1);
+        try
+        {
+            this.data = this.DalServices.Query(this.Bucket, this.Model.Query, new QueryParameters()
+                {
+                    TimeRepresentation = TimeRepresentation.DateTimeOffset
+                });
+
+        }
+        catch (YATsDb.Core.YatsdbSyntaxException ex)
+        {
+            this.syntaxError = ex.Message;
+            this.data = new List<object?[]>();
+        }
+        catch (YATsDb.Core.YatsdbDataException ex)
+        {
+            this.syntaxError = ex.Message;
+            this.data = new List<object?[]>();
+        }
+        await Task.Delay(1);
+    }
+
+    public class ModelClass
+    {
+        [System.ComponentModel.DataAnnotations.Required]
+        [System.ComponentModel.DataAnnotations.MinLength(1)]
+        public string Query
+        {
+            get;
+            set;
+        } = string.Empty;
+    }
+}
+

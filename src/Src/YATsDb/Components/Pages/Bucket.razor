@@ -1,0 +1,73 @@
+﻿@page "/ui/bucket"
+@rendermode InteractiveServer
+@using YATsDb.Core.Services
+@using YATsDb.Core.HighLevel
+@inject YATsDb.Core.Services.IManagementService ManagementServices
+@inject YATsDb.Services.Contracts.ICronManagement CronManagement
+
+<PageTitle>Buckets</PageTitle>
+
+<h1>Buckets</h1>
+
+<div class="row">
+    <div class="col-9 pb-2">
+        <NavLink href="ui/bucket/create" class="btn btn-primary float-end">Create bucket</NavLink>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-9">
+        @if (this.highLevelBuckets != null)
+        {
+            @foreach (HighLevelBucketInfo info in this.highLevelBuckets)
+            {
+                <div class="card mt-2" @key="info.Name">
+                    <div class="card-body">
+                        <h5 class="card-title">@info.Name</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">Creadted: @info.Created</h6>
+                        <p class="card-text">@info.Description</p>
+                        <NavLink class="btn btn-sm btn-outline-primary float-start me-1" href="@($"/ui/bucket/insertLines/{info.Name}")">Insert lines</NavLink>
+                        <NavLink class="btn btn-sm btn-outline-primary float-start me-1" href="@($"/ui/bucket/select/{info.Name}")">Query data</NavLink>
+                        <NavLink class="btn btn-sm btn-outline-primary float-start me-1" href="@($"/ui/cronJobs/{info.Name}")">Jobs</NavLink>
+                        <button class="btn btn-sm btn-outline-secondary float-end" @onclick="()=>this.RemoveBucket(info.Name)">Remove</button>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <YATsDb.Components.Shared.LoadingIndicator />
+        }
+    </div>
+</div>
+
+@code {
+    private List<HighLevelBucketInfo>? highLevelBuckets = null;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        this.highLevelBuckets = null;
+        await Task.Delay(1);
+        this.highLevelBuckets = this.ManagementServices.ListBuckets();
+    }
+
+    private async Task RemoveBucket(string name)
+    {
+        this.highLevelBuckets = null;
+        await Task.Delay(1);
+
+        try
+        {
+            this.CronManagement.DeleteCronJobs(name);
+            this.ManagementServices.DeleteBucket(name);
+        }
+        catch (Core.YatsdbDataException ex)
+        {
+            //TODO: Fix duplicate execution
+            Console.WriteLine(ex);
+        }
+
+        this.highLevelBuckets = this.ManagementServices.ListBuckets();
+        await Task.Delay(1);
+    }
+}
