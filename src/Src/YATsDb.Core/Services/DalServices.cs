@@ -33,7 +33,7 @@ public class DalServices : IDalServices
 
     public void InsertLines(string bucketName, string lines)
     {
-        this.logger.EnteringToInsertLines(bucketName);
+        this.logger.ToInsertLines_LogEntering(bucketName);
 
         ArgumentException.ThrowIfNullOrEmpty(bucketName, nameof(bucketName));
         if (string.IsNullOrWhiteSpace(lines))
@@ -47,12 +47,12 @@ public class DalServices : IDalServices
         this.storage.Insert(bucketName.AsMemory(),
             dataPoints);
 
-        this.logger.LogInsertedCountLines(dataPoints.Count, bucketName);
+        this.logger.InsertLines_LogCountLines(dataPoints.Count, bucketName);
     }
 
     public List<object?[]> Query(string bucketName, string query, QueryParameters parameters)
     {
-        this.logger.EnteringToQuery(bucketName);
+        this.logger.Query_LogEntering(bucketName);
 
         ArgumentException.ThrowIfNullOrEmpty(bucketName, nameof(bucketName));
         if (string.IsNullOrWhiteSpace(query))
@@ -74,7 +74,7 @@ public class DalServices : IDalServices
         List<DbValue[]> raw = this.storage.ExecuteQuery(preparedQuery);
         stp.Stop();
 
-        this.logger.LogExecutedQuery(query, stp.Elapsed);
+        this.logger.Query_LogExecuted(query, stp.Elapsed);
 
         List<object?[]> result = new List<object?[]>(raw.Count);
         foreach (DbValue[] value in raw)

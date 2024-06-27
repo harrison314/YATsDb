@@ -1,4 +1,5 @@
-﻿using System.Net.Sockets;
+﻿using Microsoft.Extensions.Logging;
+using System.Net.Sockets;
 using System.Text;
 using YATsDb.Core.LowLevel;
 using YATsDb.Core.TupleEncoding;
@@ -10,15 +11,21 @@ public class YatsdbHighLevelStorage : IYatsdbHighLevelStorage
 {
     private readonly IYatsdbLowLevelStorage lowLevelStorage;
     private readonly TimeProvider timeProvider;
+    private readonly ILogger<YatsdbHighLevelStorage> logger;
 
-    public YatsdbHighLevelStorage(IYatsdbLowLevelStorage lowLevelStorage, TimeProvider timeProvider)
+    public YatsdbHighLevelStorage(IYatsdbLowLevelStorage lowLevelStorage,
+        TimeProvider timeProvider,
+        ILogger<YatsdbHighLevelStorage> logger)
     {
         this.lowLevelStorage = lowLevelStorage;
         this.timeProvider = timeProvider;
+        this.logger = logger;
     }
 
     public void CreateBucket(string bucket, string? description, DateTimeOffset cratedAt)
     {
+        this.logger.CreateBucket_LogEntering(bucket);
+
         BucketCreationData bucketCreationData = new BucketCreationData()
         {
             CreateTimeUnixTimestampInMs = cratedAt.ToUnixTimeMilliseconds(),
@@ -28,14 +35,20 @@ public class YatsdbHighLevelStorage : IYatsdbHighLevelStorage
 
         if (!this.lowLevelStorage.TryCreateBucket(bucketCreationData, out _))
         {
+            this.logger.CreateBucket_LogBucketAlreadyExists(bucket);
             throw new YatsdbDataException($"Bucket {bucket} alerady exists.");
         }
+
+        this.logger.CreateBucket_LogCreateBucket(bucket);
     }
 
     public void DeleteBucket(string bucket, DateTimeOffset now)
     {
+        this.logger.DeleteBucket_LogEntering(bucket);
+
         if (this.lowLevelStorage.TryRemoveBucket(bucket, out uint bucketId))
         {
+            this.logger.LogBucketDoesNotExists(bucket);
             throw new YatsdbDataException($"Bucket {bucketId} does not exists.");
         }
 
@@ -47,10 +60,14 @@ public class YatsdbHighLevelStorage : IYatsdbHighLevelStorage
         byte[] removeBucketValue = TupleEncoder.Create(QueueDataType.BucketRemover, bucketId);
 
         this.lowLevelStorage.Db.Upsert(removeBucketKey, removeBucketValue);
+
+        this.logger.DeleteBucket_LogBuckedRemoved(bucket);
     }
 
     public List<HighLevelBucketInfo> GetBuckets()
     {
+        this.logger.GetBuckets_LogEntering();
+
         List<HighLevelBucketInfo> result = new List<HighLevelBucketInfo>();
         foreach (BucketCreationData info in this.lowLevelStorage.ReadBucketsComplete())
         {
@@ -64,8 +81,11 @@ public class YatsdbHighLevelStorage : IYatsdbHighLevelStorage
 
     public List<string> GetMeasurements(string bucketName)
     {
+        this.logger.GetMeasurements_LogEntering(bucketName);
+
         if (!this.lowLevelStorage.TryGetBucketId(bucketName, out uint bucketId))
         {
+            this.logger.LogBucketDoesNotExists(bucketName);
             throw new YatsdbDataException($"Bucket {bucketName} does not exists.");
         }
 
@@ -74,8 +94,11 @@ public class YatsdbHighLevelStorage : IYatsdbHighLevelStorage
 
     public void Insert(ReadOnlyMemory<char> bucket, IEnumerable<HighLevelInputDataPoint> points)
     {
+        this.logger.Insert_LogEntering(bucket);
+
         if (!this.lowLevelStorage.TryGetBucketId(bucket.Span, out uint bucketId))
         {
+            this.logger.LogBucketDoesNotExists($"{bucket.Span}");
             throw new YatsdbDataException($"Bucket {bucket.Span} does not exists.");
         }
 
@@ -88,6 +111,7 @@ public class YatsdbHighLevelStorage : IYatsdbHighLevelStorage
                     point.MeasurementName.Span,
                     out uint measurementId))
             {
+                this.logger.Insert_LogErrorEnshuringMeasurementId($"{bucket.Span}", $"{point.MeasurementName.Span}");
                 throw new YatsdbException($"Error by ensure measurementId.");
             }
 
@@ -109,6 +133,7 @@ public class YatsdbHighLevelStorage : IYatsdbHighLevelStorage
                         point.MeasurementName.Span,
                         out uint newMeasurementId))
                     {
+                        this.logger.Insert_LogErrorEnshuringMeasurementId($"{bucket.Span}", $"{point.MeasurementName.Span}");
                         throw new YatsdbException($"Error by ensure measurementId.");
                     }
 
@@ -127,8 +152,11 @@ public class YatsdbHighLevelStorage : IYatsdbHighLevelStorage
 
     public PreparedQueryObject PrepareQuery(QueryObject queryObject)
     {
+        this.logger.PrepareQuery_LogEntering(queryObject.BucketName);
+
         if (!this.lowLevelStorage.TryGetBucketId(queryObject.BucketName.Span, out uint bucketId))
         {
+            this.logger.LogBucketDoesNotExists($"{queryObject.BucketName.Span}");
             throw new YatsdbDataException($"Bucket {queryObject.BucketName.Span} does not exists.");
         }
 
@@ -210,6 +238,8 @@ public class YatsdbHighLevelStorage : IYatsdbHighLevelStorage
     {
         System.Diagnostics.Debug.Assert(preparedQueryObject != null);
         System.Diagnostics.Debug.Assert(preparedQueryObject.Type != PreparedQueryType.None);
+
+        this.logger.ExecuteQuery_LogEntering(preparedQueryObject.BucketNameId, preparedQueryObject.MeasurementId);
 
         int aggregationsCount = preparedQueryObject.ValueIndexes.Length;
         Span<double> queryValues = (aggregationsCount < 100) ? stackalloc double[aggregationsCount] : new double[aggregationsCount];

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging.Abstractions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -33,7 +34,7 @@ public sealed class YatsdbHighLevelStorageTests : IDisposable
         using IZoneTree<byte[], byte[]> db = ZoneTreeFactory.Build(cfg => cfg.SetDataDirectory(this.directory));
 
         YatsdbLowLevelStorage storage = new YatsdbLowLevelStorage(db);
-        YatsdbHighLevelStorage hlStorage = new YatsdbHighLevelStorage(storage, TimeProvider.System);
+        YatsdbHighLevelStorage hlStorage = new YatsdbHighLevelStorage(storage, TimeProvider.System, new NullLogger<YatsdbHighLevelStorage>());
 
         hlStorage.CreateBucket("bucket1", null, DateTimeOffset.UtcNow);
         hlStorage.CreateBucket("bucket2", "orem ipsum dolor sit amet, consectetur adipiscing elit. Donec nisi erat, dapibus sit amet metus in, pretium porttitor ante. Fusce quis augue vel tellus vestibulum semper. Sed eget odio turpis.", DateTimeOffset.UtcNow);
@@ -46,7 +47,7 @@ public sealed class YatsdbHighLevelStorageTests : IDisposable
         using IZoneTree<byte[], byte[]> db = ZoneTreeFactory.Build(cfg => cfg.SetDataDirectory(this.directory));
 
         YatsdbLowLevelStorage storage = new YatsdbLowLevelStorage(db);
-        YatsdbHighLevelStorage hlStorage = new YatsdbHighLevelStorage(storage, TimeProvider.System);
+        YatsdbHighLevelStorage hlStorage = new YatsdbHighLevelStorage(storage, TimeProvider.System, new NullLogger<YatsdbHighLevelStorage>());
 
         hlStorage.CreateBucket("bucket1", null, DateTimeOffset.UtcNow);
 
@@ -79,7 +80,7 @@ public sealed class YatsdbHighLevelStorageTests : IDisposable
         using IZoneTree<byte[], byte[]> db = ZoneTreeFactory.Build(cfg => cfg.SetDataDirectory(this.directory));
 
         YatsdbLowLevelStorage storage = new YatsdbLowLevelStorage(db);
-        YatsdbHighLevelStorage hlStorage = new YatsdbHighLevelStorage(storage, TimeProvider.System);
+        YatsdbHighLevelStorage hlStorage = new YatsdbHighLevelStorage(storage, TimeProvider.System, new NullLogger<YatsdbHighLevelStorage>());
 
         hlStorage.CreateBucket("bucket1", null, DateTimeOffset.UtcNow);
 
@@ -126,7 +127,7 @@ public sealed class YatsdbHighLevelStorageTests : IDisposable
         using IZoneTree<byte[], byte[]> db = ZoneTreeFactory.Build(cfg => cfg.SetDataDirectory(this.directory));
 
         YatsdbLowLevelStorage storage = new YatsdbLowLevelStorage(db);
-        YatsdbHighLevelStorage hlStorage = new YatsdbHighLevelStorage(storage, TimeProvider.System);
+        YatsdbHighLevelStorage hlStorage = new YatsdbHighLevelStorage(storage, TimeProvider.System, new NullLogger<YatsdbHighLevelStorage>());
 
         hlStorage.CreateBucket("bucket1", null, DateTimeOffset.UtcNow);
 
