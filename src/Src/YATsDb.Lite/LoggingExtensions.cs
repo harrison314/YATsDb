@@ -1,9 +1,14 @@
-﻿using ZLogger;
+﻿using Microsoft.Extensions.ObjectPool;
+using System.Text;
+using ZLogger;
 
 namespace YATsDb.Lite;
 
 internal static class LoggingExtensions
 {
+    private static readonly ObjectPool<StringBuilder> stringBuilderPool =
+    new DefaultObjectPoolProvider().CreateStringBuilderPool();
+
     public static void AddZLoggerConfiguration(this ILoggingBuilder loggingBuilder, IConfiguration configuration)
     {
         if (configuration.GetValue<bool>("ZLogging:EnableConsole"))
@@ -37,6 +42,17 @@ internal static class LoggingExtensions
 
     private static void InternalErrorLoggerAction(Exception ex)
     {
+        //https://github.com/Cysharp/ZLogger/issues/165
+        if (ex is ObjectDisposedException)
+        {
+            return;
+        }
+
+        if (ex is NullReferenceException)
+        {
+            return;
+        }
+
         Console.Error.WriteLine(ex.ToString());
     }
 
@@ -45,7 +61,27 @@ internal static class LoggingExtensions
         cfg.UsePlainTextFormatter(formatter =>
         {
             formatter.SetPrefixFormatter($"{0} | {1} | ", (in MessageTemplate template, in LogInfo info) => template.Format(info.Timestamp, info.LogLevel));
-            formatter.SetSuffixFormatter($" ({0})", (in MessageTemplate template, in LogInfo info) => template.Format(info.Category));
+            formatter.SetSuffixFormatter($" | {0} ({1})", (in MessageTemplate template, in LogInfo info) =>
+            {
+                if (info.ScopeState == null || info.ScopeState.IsEmpty)
+                {
+                    template.Format("-", info.Category);
+                }
+                else
+                {
+
+                    StringBuilder sb = stringBuilderPool.Get();
+                    foreach (KeyValuePair<string, object?> item in info.ScopeState.Properties)
+                    {
+                        sb.Append(item.Key);
+                        sb.Append('=');
+                        sb.Append(item.Value);
+                        sb.Append(' ');
+                    }
+                    template.Format(sb, info.Category);
+                    stringBuilderPool.Return(sb);
+                }
+            });
             // formatter.SetExceptionFormatter((writer, ex) => Utf8String.Format(writer, $"{ex.Message}"));
         });
     }
