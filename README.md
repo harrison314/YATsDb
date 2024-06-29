@@ -2,7 +2,7 @@
 
 _Yet Another TimeSeries Database_ is experimental time series database inspired _InfluxDb_ and _RavenDB_.
 
-YATsDb is implement in pure _.NET_ and modern _C#_ with great performance, (around 30K inserts per secund).
+YATsDb is implement in pure _.NET_ and modern _C#_ with great performance, (around 30K inserts per secund on Intel i7-8550U CPU, 1.80GHz, 24GB RAM, SSD - iserting rows one at a time).
 
 I needed a timeseries database for home IoT projects, but using _InfluxDb_ would be boring.
 The implementation of the prototype, which knew how to enter data and make inquiries, took only 12 hours.
@@ -182,10 +182,11 @@ Select by concrete time (using human readable time):
 SELECT AVG(0), COUNT(0) FROM sensors_data WHERE INTERVAL('2012-06-12 08:33:12.478', '2012-06-13') GROUP BY +10m
 ```
 
-## Roadmap
+## Potential roadmap/future work
 - Charts in _YATsDb_
 - Authentication (eg. API key, HMAC)
 - UDP endpoint
+- Geo-indexing
 
 ## Known Issues
  - Problems updating a javascript job.
