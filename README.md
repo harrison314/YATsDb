@@ -190,7 +190,6 @@ SELECT AVG(0), COUNT(0) FROM sensors_data WHERE INTERVAL('2012-06-12 08:33:12.47
 
 ## Known Issues
  - Problems updating a javascript job.
- - ObjectDisposedException in ZLogger formater.
 
 ## Links
 

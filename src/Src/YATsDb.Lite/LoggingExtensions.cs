@@ -42,17 +42,6 @@ internal static class LoggingExtensions
 
     private static void InternalErrorLoggerAction(Exception ex)
     {
-        //https://github.com/Cysharp/ZLogger/issues/165
-        if (ex is ObjectDisposedException)
-        {
-            return;
-        }
-
-        if (ex is NullReferenceException)
-        {
-            return;
-        }
-
         Console.Error.WriteLine(ex.ToString());
     }
 
