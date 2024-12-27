@@ -31,7 +31,7 @@ public sealed class YatsdbHighLevelStorageTests : IDisposable
     [Fact]
     public void CreateBucket()
     {
-        using IZoneTree<byte[], byte[]> db = ZoneTreeFactory.Build(cfg => cfg.SetDataDirectory(this.directory));
+        using IZoneTree<Memory<byte>, Memory<byte>> db = ZoneTreeFactory.Build(cfg => cfg.SetDataDirectory(this.directory));
 
         YatsdbLowLevelStorage storage = new YatsdbLowLevelStorage(db);
         YatsdbHighLevelStorage hlStorage = new YatsdbHighLevelStorage(storage, TimeProvider.System, new NullLogger<YatsdbHighLevelStorage>());
@@ -44,7 +44,7 @@ public sealed class YatsdbHighLevelStorageTests : IDisposable
     [Fact]
     public void Insert()
     {
-        using IZoneTree<byte[], byte[]> db = ZoneTreeFactory.Build(cfg => cfg.SetDataDirectory(this.directory));
+        using IZoneTree<Memory<byte>, Memory<byte>> db = ZoneTreeFactory.Build(cfg => cfg.SetDataDirectory(this.directory));
 
         YatsdbLowLevelStorage storage = new YatsdbLowLevelStorage(db);
         YatsdbHighLevelStorage hlStorage = new YatsdbHighLevelStorage(storage, TimeProvider.System, new NullLogger<YatsdbHighLevelStorage>());
@@ -77,7 +77,7 @@ public sealed class YatsdbHighLevelStorageTests : IDisposable
     [Fact]
     public void Query_Agregate_All()
     {
-        using IZoneTree<byte[], byte[]> db = ZoneTreeFactory.Build(cfg => cfg.SetDataDirectory(this.directory));
+        using IZoneTree<Memory<byte>, Memory<byte>> db = ZoneTreeFactory.Build(cfg => cfg.SetDataDirectory(this.directory));
 
         YatsdbLowLevelStorage storage = new YatsdbLowLevelStorage(db);
         YatsdbHighLevelStorage hlStorage = new YatsdbHighLevelStorage(storage, TimeProvider.System, new NullLogger<YatsdbHighLevelStorage>());
@@ -124,7 +124,7 @@ public sealed class YatsdbHighLevelStorageTests : IDisposable
     [Fact]
     public void Query_Agregate_ByTime()
     {
-        using IZoneTree<byte[], byte[]> db = ZoneTreeFactory.Build(cfg => cfg.SetDataDirectory(this.directory));
+        using IZoneTree<Memory<byte>, Memory<byte>> db = ZoneTreeFactory.Build(cfg => cfg.SetDataDirectory(this.directory));
 
         YatsdbLowLevelStorage storage = new YatsdbLowLevelStorage(db);
         YatsdbHighLevelStorage hlStorage = new YatsdbHighLevelStorage(storage, TimeProvider.System, new NullLogger<YatsdbHighLevelStorage>());

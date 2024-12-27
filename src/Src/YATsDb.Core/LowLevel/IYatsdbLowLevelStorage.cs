@@ -4,7 +4,7 @@ namespace YATsDb.Core.LowLevel;
 
 public interface IYatsdbLowLevelStorage
 {
-    IZoneTree<byte[], byte[]> Db
+    IZoneTree<Memory<byte>, Memory<byte>> Db
     {
         get; 
     }
@@ -21,7 +21,7 @@ public interface IYatsdbLowLevelStorage
         long? toUnixTimestampInMs,
         ReadOnlySpan<char> tag);
 
-    uint EnsureHilo(byte[] hiloKey);
+    uint EnsureHilo(Memory<byte> hiloKey);
 
 
     bool TryCreateBucket(BucketCreationData bucketCreationData, out uint bucketId);

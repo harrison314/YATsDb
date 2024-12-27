@@ -33,7 +33,7 @@ public sealed class YatsdbLowLevelStorageTests : IDisposable
     [Fact]
     public void YatsdbLowLevelStorage_InsertDataPoint_SimpleValue()
     {
-        using IZoneTree<byte[], byte[]> db = ZoneTreeFactory.Build(cfg => cfg.SetDataDirectory(this.directory));
+        using IZoneTree<Memory<byte>, Memory<byte>> db = ZoneTreeFactory.Build(cfg => cfg.SetDataDirectory(this.directory));
 
         YatsdbLowLevelStorage storage = new YatsdbLowLevelStorage(db);
 
@@ -44,7 +44,7 @@ public sealed class YatsdbLowLevelStorageTests : IDisposable
     [Fact]
     public void YatsdbLowLevelStorage_InsertDataPoint_SimpleValueWithTag()
     {
-        using IZoneTree<byte[], byte[]> db = ZoneTreeFactory.Build(cfg => cfg.SetDataDirectory(this.directory));
+        using IZoneTree<Memory<byte>, Memory<byte>> db = ZoneTreeFactory.Build(cfg => cfg.SetDataDirectory(this.directory));
 
         YatsdbLowLevelStorage storage = new YatsdbLowLevelStorage(db);
 
@@ -55,7 +55,7 @@ public sealed class YatsdbLowLevelStorageTests : IDisposable
     [Fact]
     public void YatsdbLowLevelStorage_InsertDataPoint_MultipleValue()
     {
-        using IZoneTree<byte[], byte[]> db = ZoneTreeFactory.Build(cfg => cfg.SetDataDirectory(this.directory));
+        using IZoneTree<Memory<byte>, Memory<byte>> db = ZoneTreeFactory.Build(cfg => cfg.SetDataDirectory(this.directory));
 
         YatsdbLowLevelStorage storage = new YatsdbLowLevelStorage(db);
 
@@ -66,7 +66,7 @@ public sealed class YatsdbLowLevelStorageTests : IDisposable
     [Fact]
     public void YatsdbLowLevelStorage_InsertDataPoint_MultipleValueWithTag()
     {
-        using IZoneTree<byte[], byte[]> db = ZoneTreeFactory.Build(cfg => cfg.SetDataDirectory(this.directory));
+        using IZoneTree<Memory<byte>, Memory<byte>> db = ZoneTreeFactory.Build(cfg => cfg.SetDataDirectory(this.directory));
 
         YatsdbLowLevelStorage storage = new YatsdbLowLevelStorage(db);
 
@@ -77,7 +77,7 @@ public sealed class YatsdbLowLevelStorageTests : IDisposable
     [Fact]
     public void YatsdbLowLevelStorage_Iterate()
     {
-        using IZoneTree<byte[], byte[]> db = ZoneTreeFactory.Build(cfg => cfg.SetDataDirectory(this.directory));
+        using IZoneTree<Memory<byte>, Memory<byte>> db = ZoneTreeFactory.Build(cfg => cfg.SetDataDirectory(this.directory));
 
         YatsdbLowLevelStorage storage = new YatsdbLowLevelStorage(db);
         this.InsertTestData(storage);
@@ -135,7 +135,7 @@ public sealed class YatsdbLowLevelStorageTests : IDisposable
     [Fact]
     public void YatsdbLowLevelStorage_IterateWithTag()
     {
-        using IZoneTree<byte[], byte[]> db = ZoneTreeFactory.Build(cfg =>
+        using IZoneTree<Memory<byte>, Memory<byte>> db = ZoneTreeFactory.Build(cfg =>
         {
             cfg.SetDataDirectory(this.directory);
         });
@@ -169,7 +169,7 @@ public sealed class YatsdbLowLevelStorageTests : IDisposable
     [InlineData("even", -1L, 1050, 2)]
     public void YatsdbLowLevelStorage_IterateTimestamps(string? tag, long from, long to, int count)
     {
-        using IZoneTree<byte[], byte[]> db = ZoneTreeFactory.Build(cfg =>
+        using IZoneTree<Memory<byte>, Memory<byte>> db = ZoneTreeFactory.Build(cfg =>
         {
             cfg.SetDataDirectory(this.directory);
         });
@@ -197,7 +197,7 @@ public sealed class YatsdbLowLevelStorageTests : IDisposable
     [Fact]
     public void YatsdbLowLevelStorage_IterateWithConditions()
     {
-        using IZoneTree<byte[], byte[]> db = ZoneTreeFactory.Build(cfg => cfg.SetDataDirectory(this.directory));
+        using IZoneTree<Memory<byte>, Memory<byte>> db = ZoneTreeFactory.Build(cfg => cfg.SetDataDirectory(this.directory));
 
         YatsdbLowLevelStorage storage = new YatsdbLowLevelStorage(db);
         this.InsertTestData(storage);
@@ -222,7 +222,7 @@ public sealed class YatsdbLowLevelStorageTests : IDisposable
     [Fact]
     public void YatsdbLowLevelStorage_IterateWithConditionsAndTag()
     {
-        using IZoneTree<byte[], byte[]> db = ZoneTreeFactory.Build(cfg => cfg.SetDataDirectory(this.directory));
+        using IZoneTree<Memory<byte>, Memory<byte>> db = ZoneTreeFactory.Build(cfg => cfg.SetDataDirectory(this.directory));
 
         YatsdbLowLevelStorage storage = new YatsdbLowLevelStorage(db);
         this.InsertTestData(storage);
@@ -249,17 +249,17 @@ public sealed class YatsdbLowLevelStorageTests : IDisposable
     [Fact]
     public void Debug()
     {
-        using IZoneTree<byte[], byte[]> db = ZoneTreeFactory.Build(cfg => cfg.SetDataDirectory(this.directory));
+        using IZoneTree<Memory<byte>, Memory<byte>> db = ZoneTreeFactory.Build(cfg => cfg.SetDataDirectory(this.directory));
 
         YatsdbLowLevelStorage storage = new YatsdbLowLevelStorage(db);
         this.InsertTestData(storage);
 
-        using IZoneTreeIterator<byte[], byte[]> iterator = db.CreateIterator();
+        using IZoneTreeIterator<Memory<byte>, Memory<byte>> iterator = db.CreateIterator();
         iterator.SeekFirst();
 
         while (iterator.Next())
         {
-            string val = TsKeyTupleEncoding.ToString(iterator.CurrentKey);
+            string val = TsKeyTupleEncoding.ToString(iterator.CurrentKey.Span);
             this.output.WriteLine("> {0}", val);
         }
     }
@@ -267,7 +267,7 @@ public sealed class YatsdbLowLevelStorageTests : IDisposable
     [Fact]
     public void YatsdbLowLevelStorage_BucketApi()
     {
-        using IZoneTree<byte[], byte[]> db = ZoneTreeFactory.Build(cfg => cfg.SetDataDirectory(this.directory));
+        using IZoneTree<Memory<byte>, Memory<byte>> db = ZoneTreeFactory.Build(cfg => cfg.SetDataDirectory(this.directory));
 
         YatsdbLowLevelStorage storage = new YatsdbLowLevelStorage(db);
         this.InsertTestData(storage);
@@ -329,7 +329,7 @@ public sealed class YatsdbLowLevelStorageTests : IDisposable
     [Fact]
     public void YatsdbLowLevelStorage_RemoveBucket()
     {
-        using IZoneTree<byte[], byte[]> db = ZoneTreeFactory.Build(cfg => cfg.SetDataDirectory(this.directory));
+        using IZoneTree<Memory<byte>, Memory<byte>> db = ZoneTreeFactory.Build(cfg => cfg.SetDataDirectory(this.directory));
 
         YatsdbLowLevelStorage storage = new YatsdbLowLevelStorage(db);
         this.InsertTestData(storage);
@@ -370,16 +370,16 @@ public sealed class YatsdbLowLevelStorageTests : IDisposable
         Assert.Contains("test2", buckets);
     }
 
-    private void DebugFlush(IZoneTree<byte[], byte[]> db)
+    private void DebugFlush(IZoneTree<Memory<byte>, Memory<byte>> db)
     {
-        using IZoneTreeIterator<byte[], byte[]> iterator = db.CreateIterator();
+        using IZoneTreeIterator<Memory<byte>, Memory<byte>> iterator = db.CreateIterator();
         iterator.SeekFirst();
 
         while (iterator.Next())
         {
             this.output.WriteLine("> {0}\t = {1}",
-                Convert.ToHexString(iterator.CurrentKey),
-                Convert.ToHexString(iterator.CurrentValue));
+                Convert.ToHexString(iterator.CurrentKey.Span),
+                Convert.ToHexString(iterator.CurrentValue.Span));
         }
     }
 
@@ -406,8 +406,8 @@ public sealed class YatsdbLowLevelStorageTests : IDisposable
     .SetComparer(new StringOrdinalComparerAscending())
     .SetKeySerializer(new Utf8StringSerializer())
     .SetValueSerializer(new Utf8StringSerializer())
-    .SetIsValueDeletedDelegate((in string x) => string.IsNullOrEmpty(x))
-  .SetMarkValueDeletedDelegate((ref string x) => x = string.Empty)
+    .SetIsDeletedDelegate((in string key, in string value) => string.IsNullOrEmpty(value))
+    .SetMarkValueDeletedDelegate((ref string x) => x = string.Empty)
     .SetDataDirectory(this.directory)
     .OpenOrCreate();
 
@@ -445,8 +445,8 @@ public sealed class YatsdbLowLevelStorageTests : IDisposable
     .SetComparer(new StringOrdinalComparerAscending())
     .SetKeySerializer(new Utf8StringSerializer())
     .SetValueSerializer(new Utf8StringSerializer())
-    .SetIsValueDeletedDelegate((in string x) => string.IsNullOrEmpty(x))
-  .SetMarkValueDeletedDelegate((ref string x) => x = string.Empty)
+    .SetIsDeletedDelegate((in string key, in string value) => string.IsNullOrEmpty(value))
+    .SetMarkValueDeletedDelegate((ref string x) => x = string.Empty)
     .SetDataDirectory(this.directory)
     .OpenOrCreate();
 

@@ -13,17 +13,17 @@ namespace YATsDb.Core;
 
 public static class ZoneTreeFactory
 {
-    internal static readonly IRefComparer<byte[]> RefComparer = new ByteArrayComparerAscending();
+    internal static readonly IRefComparer<Memory<byte>> RefComparer = new ByteArrayComparerAscending();
 
-    public static IZoneTree<byte[], byte[]> Build(Action<ZoneTreeFactory<byte[], byte[]>> configure)
+    public static IZoneTree<Memory<byte>, Memory<byte>> Build(Action<ZoneTreeFactory<Memory<byte>, Memory<byte>>> configure)
     {
-        ZoneTreeFactory<byte[], byte[]> factory = new ZoneTreeFactory<byte[], byte[]>();
-        factory.DisableDeleteValueConfigurationValidation(false);
+        ZoneTreeFactory<Memory<byte>, Memory<byte>> factory = new ZoneTreeFactory<Memory<byte>, Memory<byte>>();
+        //factory.DisableDeleteValueConfigurationValidation(false);
         factory.SetComparer(RefComparer);
         factory.SetKeySerializer(new ByteArraySerializer());
         factory.SetValueSerializer(new ByteArraySerializer());
-        factory.SetIsValueDeletedDelegate(static (in byte[] x) => x[0] == DataType.RemovedValue);
-        factory.SetMarkValueDeletedDelegate(static (ref byte[] x) => x[0] = DataType.RemovedValue);
+        factory.SetIsDeletedDelegate(static (in Memory<byte> key, in Memory<byte> value) => value.Span[0] == DataType.RemovedValue);
+        factory.SetMarkValueDeletedDelegate(static (ref Memory<byte> x) => x.Span[0] = DataType.RemovedValue);
 
         configure(factory);
 

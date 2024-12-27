@@ -29,7 +29,7 @@ public class KvStorageTests : IDisposable
     [Fact]
     public void KvStorage_Upsert()
     {
-        using IZoneTree<byte[], byte[]> db = ZoneTreeFactory.Build(cfg => cfg.SetDataDirectory(this.directory));
+        using IZoneTree<Memory<byte>, Memory<byte>> db = ZoneTreeFactory.Build(cfg => cfg.SetDataDirectory(this.directory));
         KvStorage kvStorage = new KvStorage(db);
 
         kvStorage.Upsert("key1", "aaa", "bbb");
@@ -41,7 +41,7 @@ public class KvStorageTests : IDisposable
     [Fact]
     public void KvStorage_TryGet_Normal()
     {
-        using IZoneTree<byte[], byte[]> db = ZoneTreeFactory.Build(cfg => cfg.SetDataDirectory(this.directory));
+        using IZoneTree<Memory<byte>, Memory<byte>> db = ZoneTreeFactory.Build(cfg => cfg.SetDataDirectory(this.directory));
         KvStorage kvStorage = new KvStorage(db);
 
         kvStorage.Upsert("key1", "key2", "item1");
@@ -54,7 +54,7 @@ public class KvStorageTests : IDisposable
     [Fact]
     public void KvStorage_TryGet_NonExists()
     {
-        using IZoneTree<byte[], byte[]> db = ZoneTreeFactory.Build(cfg => cfg.SetDataDirectory(this.directory));
+        using IZoneTree<Memory<byte>, Memory<byte>> db = ZoneTreeFactory.Build(cfg => cfg.SetDataDirectory(this.directory));
         KvStorage kvStorage = new KvStorage(db);
 
         kvStorage.Upsert("key1", "key2", "item1");
@@ -67,7 +67,7 @@ public class KvStorageTests : IDisposable
     [Fact]
     public void KvStorage_TryGet_Override()
     {
-        using IZoneTree<byte[], byte[]> db = ZoneTreeFactory.Build(cfg => cfg.SetDataDirectory(this.directory));
+        using IZoneTree<Memory<byte>, Memory<byte>> db = ZoneTreeFactory.Build(cfg => cfg.SetDataDirectory(this.directory));
         KvStorage kvStorage = new KvStorage(db);
 
         kvStorage.Upsert("key1", "key2", "item1");
@@ -81,7 +81,7 @@ public class KvStorageTests : IDisposable
     [Fact]
     public void KvStorage_Remove_Normal()
     {
-        using IZoneTree<byte[], byte[]> db = ZoneTreeFactory.Build(cfg => cfg.SetDataDirectory(this.directory));
+        using IZoneTree<Memory<byte>, Memory<byte>> db = ZoneTreeFactory.Build(cfg => cfg.SetDataDirectory(this.directory));
         KvStorage kvStorage = new KvStorage(db);
 
         kvStorage.Upsert("key1", "key2", "item1");
@@ -96,7 +96,7 @@ public class KvStorageTests : IDisposable
     [Fact]
     public void KvStorage_Remove_Nonexists()
     {
-        using IZoneTree<byte[], byte[]> db = ZoneTreeFactory.Build(cfg => cfg.SetDataDirectory(this.directory));
+        using IZoneTree<Memory<byte>, Memory<byte>> db = ZoneTreeFactory.Build(cfg => cfg.SetDataDirectory(this.directory));
         KvStorage kvStorage = new KvStorage(db);
 
         kvStorage.Upsert("key1", "key2", "item1");
@@ -111,7 +111,7 @@ public class KvStorageTests : IDisposable
     [Fact]
     public void KvStorage_EnumerateKeys_Normal()
     {
-        using IZoneTree<byte[], byte[]> db = ZoneTreeFactory.Build(cfg => cfg.SetDataDirectory(this.directory));
+        using IZoneTree<Memory<byte>, Memory<byte>> db = ZoneTreeFactory.Build(cfg => cfg.SetDataDirectory(this.directory));
         KvStorage kvStorage = new KvStorage(db);
 
         kvStorage.Upsert("key0", "0000", "bad value");
@@ -133,7 +133,7 @@ public class KvStorageTests : IDisposable
     [Fact]
     public void KvStorage_EnumerateKeys_NonExists()
     {
-        using IZoneTree<byte[], byte[]> db = ZoneTreeFactory.Build(cfg => cfg.SetDataDirectory(this.directory));
+        using IZoneTree<Memory<byte>, Memory<byte>> db = ZoneTreeFactory.Build(cfg => cfg.SetDataDirectory(this.directory));
         KvStorage kvStorage = new KvStorage(db);
 
         kvStorage.Upsert("key0", "0000", "bad value");
@@ -152,7 +152,7 @@ public class KvStorageTests : IDisposable
     [Fact]
     public void KvStorage_EnumerateKeyValues_Normal()
     {
-        using IZoneTree<byte[], byte[]> db = ZoneTreeFactory.Build(cfg => cfg.SetDataDirectory(this.directory));
+        using IZoneTree<Memory<byte>, Memory<byte>> db = ZoneTreeFactory.Build(cfg => cfg.SetDataDirectory(this.directory));
         KvStorage kvStorage = new KvStorage(db);
 
         kvStorage.Upsert("key0", "0000", "bad value");
@@ -178,7 +178,7 @@ public class KvStorageTests : IDisposable
     [Fact]
     public void KvStorage_EnumerateKeyValues_NonExists()
     {
-        using IZoneTree<byte[], byte[]> db = ZoneTreeFactory.Build(cfg => cfg.SetDataDirectory(this.directory));
+        using IZoneTree<Memory<byte>, Memory<byte>> db = ZoneTreeFactory.Build(cfg => cfg.SetDataDirectory(this.directory));
         KvStorage kvStorage = new KvStorage(db);
 
         kvStorage.Upsert("key0", "0000", "bad value");

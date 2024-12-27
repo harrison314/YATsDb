@@ -7,14 +7,14 @@ namespace YATsDb.Core.LowLevel;
 
 public class LowLevelIterator : IDisposable
 {
-    private readonly IZoneTreeIterator<byte[], byte[]> iterator;
-    private readonly IRefComparer<byte[]> comparer;
-    private readonly byte[] endKey;
+    private readonly IZoneTreeIterator<Memory<byte>, Memory<byte>> iterator;
+    private readonly IRefComparer<Memory<byte>> comparer;
+    private readonly Memory<byte> endKey;
     private readonly int timePosition;
 
-    public LowLevelIterator(IZoneTreeIterator<byte[], byte[]> iterator,
-        IRefComparer<byte[]> comparer,
-        byte[] endKey,
+    public LowLevelIterator(IZoneTreeIterator<Memory<byte>, Memory<byte>> iterator,
+        IRefComparer<Memory<byte>> comparer,
+        Memory<byte> endKey,
         int timePosition)
     {
         this.iterator = iterator;
@@ -31,14 +31,14 @@ public class LowLevelIterator : IDisposable
             return false;
         }
 
-        if (!TsKeyTupleEncoding.TryDecodeTime(this.iterator.CurrentKey, this.timePosition, out unixTimestampInMs))
+        if (!TsKeyTupleEncoding.TryDecodeTime(this.iterator.CurrentKey.Span, this.timePosition, out unixTimestampInMs))
         {
             throw new InvalidDataException("Can not read time.");
         }
 
         if (!indexes.IsEmpty)
         {
-            TsValueTupleEncoding.DecodeValues(this.iterator.CurrentValue, indexes, values);
+            TsValueTupleEncoding.DecodeValues(this.iterator.CurrentValue.Span, indexes, values);
         }
 
         return true;
@@ -53,14 +53,14 @@ public class LowLevelIterator : IDisposable
             return false;
         }
 
-        if (!TsKeyTupleEncoding.TryDecodeTime(this.iterator.CurrentKey, this.timePosition, out unixTimestampInMs))
+        if (!TsKeyTupleEncoding.TryDecodeTime(this.iterator.CurrentKey.Span, this.timePosition, out unixTimestampInMs))
         {
             throw new InvalidDataException("Can not read time.");
         }
 
         if (!indexes.IsEmpty)
         {
-            TsValueTupleEncoding.DecodeValues(this.iterator.CurrentValue, indexes, values);
+            TsValueTupleEncoding.DecodeValues(this.iterator.CurrentValue.Span, indexes, values);
         }
 
         utf8Tag = TsValueTupleEncoding.DecodeTagData(this.iterator.CurrentValue);
@@ -77,12 +77,12 @@ public class LowLevelIterator : IDisposable
             return false;
         }
 
-        if (!TsKeyTupleEncoding.TryDecodeTime(this.iterator.CurrentKey, this.timePosition, out long unixTimestampInMs))
+        if (!TsKeyTupleEncoding.TryDecodeTime(this.iterator.CurrentKey.Span, this.timePosition, out long unixTimestampInMs))
         {
             throw new InvalidDataException("Can not read time.");
         }
 
-        double[] values = TsValueTupleEncoding.DecodeAllValues(this.iterator.CurrentValue);
+        double[] values = TsValueTupleEncoding.DecodeAllValues(this.iterator.CurrentValue.Span);
         ReadOnlyMemory<byte> utf8Tag = TsValueTupleEncoding.DecodeTagData(this.iterator.CurrentValue);
         string? tag = utf8Tag.IsEmpty ? null : stringAllocator.AllocateUtf8(utf8Tag);
 
@@ -104,7 +104,7 @@ public class LowLevelIterator : IDisposable
         return result < 0;
     }
 
-    public byte[] GetCurrentKey()
+    public Memory<byte> GetCurrentKey()
     {
         return this.iterator.CurrentKey;
     }

@@ -12,7 +12,7 @@ namespace YATsDb.Core.Tests.TupleEncoding;
 
 public class TsKeyTupleEncodingTests
 {
-    private readonly IRefComparer<byte[]> comparer = YATsDb.Core.ZoneTreeFactory.RefComparer;
+    private readonly IRefComparer<Memory<byte>> comparer = YATsDb.Core.ZoneTreeFactory.RefComparer;
 
     [Property(StartSize = 200)]
     public Property KeyTupleEncoding_Endcode_BucketId(uint bucketId, uint bucketId2)
