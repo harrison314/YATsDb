@@ -15,15 +15,14 @@ public sealed class ZoneTreeMaintainerHostedService<TKey, TValue> : IHostedServi
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        this.zoneTreeMaintainer.EnablePeriodicTimer = true;
+        this.zoneTreeMaintainer.EnableJobForCleaningInactiveCaches = true;
         return Task.CompletedTask;
     }
 
     public Task StopAsync(CancellationToken cancellationToken)
     {
-        this.zoneTreeMaintainer.EnablePeriodicTimer = false;
-        this.zoneTreeMaintainer.CompleteRunningTasks();
-        return Task.CompletedTask;
+        this.zoneTreeMaintainer.EnableJobForCleaningInactiveCaches = false;
+        return this.zoneTreeMaintainer.WaitForBackgroundThreadsAsync();
     }
 
     public void Dispose()

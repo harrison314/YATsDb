@@ -34,7 +34,7 @@ public static class Program
         builder.Services.AddTransient<YATsDb.Core.HighLevel.IYatsdbHighLevelStorage, YATsDb.Core.HighLevel.YatsdbHighLevelStorage>();
         builder.Services.AddTransient<YATsDb.Core.LowLevel.IYatsdbLowLevelStorage, YATsDb.Core.LowLevel.YatsdbLowLevelStorage>();
         builder.Services.AddTransient<YATsDb.Core.LowLevel.IKvStorage, YATsDb.Core.LowLevel.KvStorage>();
-        builder.Services.AddSingleton<IZoneTree<byte[], byte[]>>(sp =>
+        builder.Services.AddSingleton<IZoneTree<Memory<byte>, Memory<byte>>>(sp =>
         {
             Services.Configuration.DbSetup dbSetup = sp.GetRequiredService<IOptions<Services.Configuration.DbSetup>>().Value;
 
@@ -53,7 +53,7 @@ public static class Program
             });
         });
 
-        builder.Services.AddHostedService<Infrastructure.Workers.ZoneTreeMaintainerHostedService<byte[], byte[]>>();
+        builder.Services.AddHostedService<Infrastructure.Workers.ZoneTreeMaintainerHostedService<Memory<byte>, Memory<byte>>>();
         builder.Services.AddTransient<YATsDb.Core.Services.ICache, YATsDb.Lite.Services.Implementation.YatsdbCache>();
 
 
