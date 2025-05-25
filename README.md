@@ -65,7 +65,7 @@ _YATsDb_ allows querying in a syntax that resembles SQL, but uses value position
 
 Select humidity data from _Room2_ older than 12 hours:
 ```shell
-curl -XPOST http://localhost:8080/query/raw/smart_home --data-binary "SELECT AVG(1), MIN(1), MAX(1), COUNT(1) FROM sensors_data WHERE TAG('Room2') AND INTERVAL(NULL, -10h) GROUP BY +10m"
+curl -XPOST http://localhost:8080/query/raw/smart_home --data-binary "SELECT AVG(1), MIN(1), MAX(1), COUNT(1) FROM sensors_data WHERE TAG('Room2') AND INTERVAL(NULL, -12h) GROUP BY +10m"
 ```
 
 ## Simple line protocol
@@ -118,21 +118,21 @@ sensors_data,home/room3/esp32 13.5 1608852417000
 Complete grammar for querying data:
 
 ```
-<SELECT statement> ::= SELECT <projection statement> FROM measurement_name 
-    [<WHERE statement>]
-    [<GROUPBY statement>]
-    [<LIMIT statement>]
-<projection statement> ::= { * | <projection> [ ,...250 ]}
+<SELECT statement> ::= SELECT <projection_statement> FROM measurement_name 
+    [<WHERE_statement>]
+    [<GROUPBY_statement>]
+    [<LIMIT_statement>]
+<projection_statement> ::= { * | <projection> [,...250 ]}
 <projection> ::= <projection function>(<index>)
 <projection function> ::= { VARIANCE | SUM | COUNT | AVG | IDENTITY | MAX | MIN | STDDEV | REMEDIAN | SIGN | CHANGE_PER_SEC | CHANGE_PER_HOUR | CHANGE_PER_DAY }
 <index> ::= integer_number
-<WHERE statement> ::= WHERE <where function> [AND ...n]
-<where function> ::= { TAG(<string>) | INTERVAL(<interval exp>, <interval exp>) }
+<WHERE_statement> ::= WHERE <where_function> [AND...n]
+<where_function> ::= { TAG(<string>) | INTERVAL(<interval_exp>, <interval_exp>) }
 <string> ::= string
-<interval exp> ::= { integer_number | <time span> | <string> | NOW() }
-<time span> ::= { + | - }double_value{ ms | s | m | h | d | w | y }
-<GROUPBY statement> ::= GROUP BY <time span>
-<LIMIT statement> ::= LIMIT { integer_number | integer_number, integer_number | ..integer_number }
+<interval_exp> ::= { integer_number | <time_span> | <string> | NOW() }
+<time_span> ::= { + | - }double_value{ ms | s | m | h | d | w | y }
+<GROUPBY_statement> ::= GROUP BY <time_span>
+<LIMIT_statement> ::= LIMIT { integer_number | integer_number, integer_number | ..integer_number }
 ```
 
 ### Examples
