@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,7 +10,7 @@ namespace YATsDb.Core.TupleEncoding;
 
 internal class TupleEncoder
 {
-    public static byte[] Create<T1>(byte type, T1 value1)
+    public static byte[] Create<T1>(ushort type, T1 value1)
     {
         TupleWriter tw = new TupleWriter(type);
         tw.ReserveType(value1);
@@ -19,16 +20,16 @@ internal class TupleEncoder
         return tw.ToArray();
     }
 
-    public static bool TryDeconstruct<T1>(ReadOnlySpan<byte> key, byte type, out T1 value1)
+    public static bool TryDeconstruct<T1>(ReadOnlySpan<byte> key, ushort type, out T1 value1)
     {
         value1 = default!;
-        int position = 1;
+        int position = 2;
 
-        return key[0] == type
+        return BinaryPrimitives.ReadUInt16BigEndian(key) == type
             && TupleReader.TryRead(key, ref position, out value1);
     }
 
-    public static byte[] Create<T1, T2>(byte type, T1 value1, T2 value2)
+    public static byte[] Create<T1, T2>(ushort type, T1 value1, T2 value2)
     {
         TupleWriter tw = new TupleWriter(type);
         tw.ReserveType(value1);
@@ -40,18 +41,18 @@ internal class TupleEncoder
         return tw.ToArray();
     }
 
-    public static bool TryDeconstruct<T1, T2>(ReadOnlySpan<byte> key, byte type, out T1 value1, out T2 value2)
+    public static bool TryDeconstruct<T1, T2>(ReadOnlySpan<byte> key, ushort type, out T1 value1, out T2 value2)
     {
         value1 = default!;
         value2 = default!;
-        int position = 1;
+        int position = 2;
 
-        return key[0] == type
+        return BinaryPrimitives.ReadUInt16BigEndian(key) == type
             && TupleReader.TryRead(key, ref position, out value1)
             && TupleReader.TryRead(key, ref position, out value2);
     }
 
-    public static byte[] Create<T1, T2, T3>(byte type, T1 value1, T2 value2, T3 value3)
+    public static byte[] Create<T1, T2, T3>(ushort type, T1 value1, T2 value2, T3 value3)
     {
         TupleWriter tw = new TupleWriter(type);
         tw.ReserveType(value1);
@@ -65,20 +66,20 @@ internal class TupleEncoder
         return tw.ToArray();
     }
 
-    public static bool TryDeconstruct<T1, T2, T3>(ReadOnlySpan<byte> key, byte type, out T1 value1, out T2 value2, out T3 value3)
+    public static bool TryDeconstruct<T1, T2, T3>(ReadOnlySpan<byte> key, ushort type, out T1 value1, out T2 value2, out T3 value3)
     {
         value1 = default!;
         value2 = default!;
         value3 = default!;
-        int position = 1;
+        int position = 2;
 
-        return key[0] == type
+        return BinaryPrimitives.ReadUInt16BigEndian(key) == type
             && TupleReader.TryRead(key, ref position, out value1)
             && TupleReader.TryRead(key, ref position, out value2)
             && TupleReader.TryRead(key, ref position, out value3);
     }
 
-    public static byte[] Create<T1, T2, T3, T4>(byte type, T1 value1, T2 value2, T3 value3, T4 value4)
+    public static byte[] Create<T1, T2, T3, T4>(ushort type, T1 value1, T2 value2, T3 value3, T4 value4)
     {
         TupleWriter tw = new TupleWriter(type);
         tw.ReserveType(value1);
@@ -94,22 +95,22 @@ internal class TupleEncoder
         return tw.ToArray();
     }
 
-    public static bool TryDeconstruct<T1, T2, T3, T4>(ReadOnlySpan<byte> key, byte type, out T1 value1, out T2 value2, out T3 value3, out T4 value4)
+    public static bool TryDeconstruct<T1, T2, T3, T4>(ReadOnlySpan<byte> key, ushort type, out T1 value1, out T2 value2, out T3 value3, out T4 value4)
     {
         value1 = default!;
         value2 = default!;
         value3 = default!;
         value4 = default!;
-        int position = 1;
+        int position = 2;
 
-        return key[0] == type
+        return BinaryPrimitives.ReadUInt16BigEndian(key) == type
             && TupleReader.TryRead(key, ref position, out value1)
             && TupleReader.TryRead(key, ref position, out value2)
             && TupleReader.TryRead(key, ref position, out value3)
             && TupleReader.TryRead(key, ref position, out value4);
     }
 
-    public static byte[] Create<T1, T2, T3, T4, T5>(byte type, T1 value1, T2 value2, T3 value3, T4 value4, T5 value5)
+    public static byte[] Create<T1, T2, T3, T4, T5>(ushort type, T1 value1, T2 value2, T3 value3, T4 value4, T5 value5)
     {
         TupleWriter tw = new TupleWriter(type);
         tw.ReserveType(value1);
@@ -127,16 +128,16 @@ internal class TupleEncoder
         return tw.ToArray();
     }
 
-    public static bool TryDeconstruct<T1, T2, T3, T4, T5>(ReadOnlySpan<byte> key, byte type, out T1 value1, out T2 value2, out T3 value3, out T4 value4, out T5 value5)
+    public static bool TryDeconstruct<T1, T2, T3, T4, T5>(ReadOnlySpan<byte> key, ushort type, out T1 value1, out T2 value2, out T3 value3, out T4 value4, out T5 value5)
     {
         value1 = default!;
         value2 = default!;
         value3 = default!;
         value4 = default!;
         value5 = default!;
-        int position = 1;
+        int position = 2;
 
-        return key[0] == type
+        return BinaryPrimitives.ReadUInt16BigEndian(key) == type
             && TupleReader.TryRead(key, ref position, out value1)
             && TupleReader.TryRead(key, ref position, out value2)
             && TupleReader.TryRead(key, ref position, out value3)
@@ -144,7 +145,7 @@ internal class TupleEncoder
             && TupleReader.TryRead(key, ref position, out value5);
     }
 
-    public static byte[] Create<T1, T2, T3, T4, T5, T6>(byte type, T1 value1, T2 value2, T3 value3, T4 value4, T5 value5, T6 value6)
+    public static byte[] Create<T1, T2, T3, T4, T5, T6>(ushort type, T1 value1, T2 value2, T3 value3, T4 value4, T5 value5, T6 value6)
     {
         TupleWriter tw = new TupleWriter(type);
         tw.ReserveType(value1);
@@ -164,7 +165,7 @@ internal class TupleEncoder
         return tw.ToArray();
     }
 
-    public static bool TryDeconstruct<T1, T2, T3, T4, T5, T6>(ReadOnlySpan<byte> key, byte type, out T1 value1, out T2 value2, out T3 value3, out T4 value4, out T5 value5, out T6 value6)
+    public static bool TryDeconstruct<T1, T2, T3, T4, T5, T6>(ReadOnlySpan<byte> key, ushort type, out T1 value1, out T2 value2, out T3 value3, out T4 value4, out T5 value5, out T6 value6)
     {
         value1 = default!;
         value2 = default!;
@@ -172,9 +173,9 @@ internal class TupleEncoder
         value4 = default!;
         value5 = default!;
         value6 = default!;
-        int position = 1;
+        int position = 2;
 
-        return key[0] == type
+        return BinaryPrimitives.ReadUInt16BigEndian(key) == type
             && TupleReader.TryRead(key, ref position, out value1)
             && TupleReader.TryRead(key, ref position, out value2)
             && TupleReader.TryRead(key, ref position, out value3)
@@ -186,7 +187,7 @@ internal class TupleEncoder
     public static (byte Tag, IReadOnlyList<object> Values) DeconstructValues(ReadOnlySpan<byte> key)
     {
         List<object> values = new List<object>();
-        int position = 1;
+        int position = 2;
         while (TupleReader.TryReadObject(key, ref position, out object? value))
         {
             values.Add(value);
@@ -197,7 +198,7 @@ internal class TupleEncoder
 
     public static string DeconstructAsString(ReadOnlySpan<byte> key)
     {
-        int position = 1;
+        int position = 2;
         StringBuilder sb = new StringBuilder();
         sb.AppendFormat("Tag: {0}", key[0]);
         sb.AppendLine();

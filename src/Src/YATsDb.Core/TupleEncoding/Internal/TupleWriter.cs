@@ -10,12 +10,12 @@ namespace YATsDb.Core.TupleEncoding.Internal;
 
 internal ref struct TupleWriter
 {
-    int size = 1;
-    byte[]? buffer;
-    byte type;
-    int pointer = 0;
+    private int size = 2;
+    private byte[]? buffer;
+    private ushort type;
+    private int pointer = 0;
 
-    public TupleWriter(byte type)
+    public TupleWriter(ushort type)
     {
         this.buffer = null;
         this.type = type;
@@ -81,8 +81,9 @@ internal ref struct TupleWriter
     public void AllocateBuffer()
     {
         this.buffer = GC.AllocateUninitializedArray<byte>(this.size);
-        this.buffer[0] = this.type;
-        this.pointer = 1;
+
+        BinaryPrimitives.WriteUInt16BigEndian(this.buffer.AsSpan(), this.type);
+        this.pointer = 2;
     }
 
     internal void WriteBool(bool value)

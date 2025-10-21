@@ -13,6 +13,7 @@ internal static class BucketKeyEncoder
     {
         return new byte[]
         {
+            0,
             DataType.KeyBucketPrefix,
             //0,
             //0,
@@ -25,8 +26,8 @@ internal static class BucketKeyEncoder
         int encodedTagBytes = Encoding.UTF8.GetByteCount(bucketName);
 
         byte[] keyBytes = GC.AllocateUninitializedArray<byte>(4 + encodedTagBytes);
-        keyBytes[0] = DataType.KeyBucketPrefix;
-        keyBytes[1] = 0;
+        keyBytes[0] = 0;
+        keyBytes[1] = DataType.KeyBucketPrefix;
 
         keyBytes[2] = TupleValueType.TupleUnicodeString;
         keyBytes[encodedTagBytes + 3] = 0x00;
@@ -38,14 +39,14 @@ internal static class BucketKeyEncoder
 
     public static string Decode(ReadOnlySpan<byte> value)
     {
-        if (value[0] != DataType.KeyBucketPrefix) throw new ArgumentException();
+        if (value[0] != 0 || value[1] != DataType.KeyBucketPrefix) throw new ArgumentException();
 
         return Encoding.UTF8.GetString(value[3..^1]);
     }
 
     public static bool TryDecode(ReadOnlySpan<byte> value, out string name)
     {
-        if (value[0] == DataType.KeyBucketPrefix)
+        if (value[0] == 0 && value[1] == DataType.KeyBucketPrefix)
         {
             name = Encoding.UTF8.GetString(value[3..^1]);
             return true;
