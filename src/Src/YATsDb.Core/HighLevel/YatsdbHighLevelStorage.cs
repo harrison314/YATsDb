@@ -46,7 +46,7 @@ public class YatsdbHighLevelStorage : IYatsdbHighLevelStorage
     {
         this.logger.DeleteBucket_LogEntering(bucket);
 
-        if (this.lowLevelStorage.TryRemoveBucket(bucket, out uint bucketId))
+        if (!this.lowLevelStorage.TryRemoveBucket(bucket, out uint bucketId))
         {
             this.logger.LogBucketDoesNotExists(bucket);
             throw new YatsdbDataException($"Bucket {bucketId} does not exists.");
@@ -102,8 +102,7 @@ public class YatsdbHighLevelStorage : IYatsdbHighLevelStorage
             throw new YatsdbDataException($"Bucket {bucket.Span} does not exists.");
         }
 
-        Enumerable.TryGetNonEnumeratedCount(points, out int enumeratedCount);
-        if (enumeratedCount == 1)
+        if (Enumerable.TryGetNonEnumeratedCount(points, out int enumeratedCount) && enumeratedCount == 1)
         {
             HighLevelInputDataPoint point = points.Single();
 
@@ -258,7 +257,7 @@ public class YatsdbHighLevelStorage : IYatsdbHighLevelStorage
             preparedQueryObject.To.GetTimeValue(this.timeProvider),
             preparedQueryObject.RequestedTag.Span);
 
-        List<DbValue[]> response = default!;
+        List<DbValue[]> response = new List<DbValue[]>();
 
         if (preparedQueryObject.Type == PreparedQueryType.WithGroupBy)
         {
